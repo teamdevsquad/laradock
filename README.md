@@ -10,10 +10,10 @@ Customize the .env file
 cp .env-example .env
 ```
 
-Set the `DOCKER_HOST_IP` variable with your IP Address
+Customize the bashrc_aliases.sh file
 
 ```
-ipconfig getifaddr en0
+cd config/workspace/custom && cp bashrc_aliases.sh.example bashrc_aliases.sh
 ```
 
 ## Login
@@ -30,11 +30,3 @@ As devsquad:
 docker exec -u devsquad -it blog_workspace zsh
 ```
 
-## Post Install
-
-### Git Configuration
-
-```bash
-git config --global user.name "John Doe"
-git config --global user.email johndoe@example.com
-```
