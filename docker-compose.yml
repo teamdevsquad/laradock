@@ -18,8 +18,8 @@ services:
 
     workspace:
       restart: on-failure
-      container_name: blog_workspace
-      domainname: workspace.blog.test
+      container_name: ${APP_NAME}_workspace
+      domainname: workspace.${APP_NAME}.test
       build:
         context: ./config/workspace
         args:
@@ -44,8 +44,8 @@ services:
 
     php-fpm:
       restart: on-failure
-      container_name: blog_php-fpm
-      domainname: php-fpm.blog.test
+      container_name: ${APP_NAME}_php-fpm
+      domainname: php-fpm.${APP_NAME}.test
       build:
         context: ./config/php-fpm
         args:
@@ -65,8 +65,8 @@ services:
 
     php-worker:
       restart: on-failure
-      container_name: blog_php-worker
-      domainname: php-worker.blog.test
+      container_name: ${APP_NAME}_php-worker
+      domainname: php-worker.${APP_NAME}.test
       build:
         context: ./config/php-worker
         args:
@@ -84,8 +84,8 @@ services:
 
     nginx:
       restart: on-failure
-      container_name: blog_nginx
-      domainname: blog.test
+      container_name: ${APP_NAME}_nginx
+      domainname: ${APP_NAME}.test
       build:
         context: ./config/nginx
         args:
@@ -106,8 +106,8 @@ services:
 
     postgres:
       restart: on-failure
-      container_name: blog_postgres
-      domainname: postgres.blog.test
+      container_name: ${APP_NAME}_postgres
+      domainname: postgres.${APP_NAME}.test
       build: ./config/postgres
       volumes:
         - ./store/postgres:/var/lib/postgresql/data
@@ -122,8 +122,8 @@ services:
 
     redis:
       restart: on-failure
-      container_name: blog_redis
-      domainname: redis.blog.test
+      container_name: ${APP_NAME}_redis
+      domainname: redis.${APP_NAME}.test
       build: ./config/redis
       volumes:
         - ./store/redis:/data
@@ -134,8 +134,8 @@ services:
 
     adminer:
       restart: on-failure
-      container_name: blog_adminer
-      domainname: adminer.blog.test
+      container_name: ${APP_NAME}_adminer
+      domainname: adminer.${APP_NAME}.test
       build:
         context: ./config/adminer
       ports:
@@ -148,8 +148,8 @@ services:
 
     maildev:
       restart: on-failure
-      container_name: blog_maildev
-      domainname: maildev.blog.test
+      container_name: ${APP_NAME}_maildev
+      domainname: maildev.${APP_NAME}.test
       build: ./config/maildev
       ports:
         - "8181:80"

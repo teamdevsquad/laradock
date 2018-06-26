@@ -16,8 +16,19 @@ Set the `DOCKER_HOST_IP` variable with your IP Address
 ipconfig getifaddr en0
 ```
 
-## Login as devsquad
+## Login
+
+As root:
+
+```bash
+docker exec -it blog_workspace bash
+```
+
+As devsquad:
+
+```bash
 docker exec -u devsquad -it blog_workspace zsh
+```
 
 ## Post Install
 
