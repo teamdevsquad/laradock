@@ -26,11 +26,9 @@ RUN docker-php-ext-install mysqli mbstring pdo pdo_mysql tokenizer xml pcntl
 RUN pecl channel-update pecl.php.net && pecl install memcached mcrypt-1.0.1 && docker-php-ext-enable memcached
 
 # Install PostgreSQL drivers:
-ARG INSTALL_PGSQL=false
-RUN if [ ${INSTALL_PGSQL} = true ]; then \
-    apk --update add postgresql-dev \
-        && docker-php-ext-install pdo_pgsql \
-;fi
+
+RUN apk --update add postgresql-dev \
+        && docker-php-ext-install pdo_pgsql
 
 RUN rm /var/cache/apk/* \
     && mkdir -p /var/www

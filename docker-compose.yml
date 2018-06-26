@@ -71,7 +71,6 @@ services:
         context: ./config/php-worker
         args:
           - PHP_VERSION=7.2
-          - INSTALL_PGSQL=true
       volumes:
         - ../:/var/www:cached
         - ./config/php-worker/supervisord.d:/etc/supervisord.d
