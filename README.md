@@ -2,7 +2,13 @@
 
 Docker configuration for Laravel Projects developed by DevSquad
 
-## Setup
+## Getting Started
+
+Clone the repository
+
+```bash
+git clone https://github.com/teamdevsquad/laravel-docker.git blog
+```
 
 Customize the .env file
 
