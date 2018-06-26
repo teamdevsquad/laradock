@@ -31,13 +31,13 @@ services:
           - GIT_USER_EMAIL=${GIT_USER_EMAIL}
           - TZ=UTC
       volumes:
-        - ../:/var/www:cached
+        - ./code:/var/www:cached
         - ./config/workspace/custom:/opt/custom
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       tty: true
       environment:
-        - PHP_IDE_CONFIG=serverName=devsquad-cli
+        - PHP_IDE_CONFIG=serverName=devsquad-server
       networks:
         - frontend
         - backend
@@ -51,13 +51,13 @@ services:
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ../:/var/www:cached
+        - ./code:/var/www:cached
       expose:
         - "9000"
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       environment:
-        - PHP_IDE_CONFIG=serverName=devsquad-fpm
+        - PHP_IDE_CONFIG=serverName=devsquad-server
       depends_on:
         - workspace
       networks:
@@ -72,7 +72,7 @@ services:
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ../:/var/www:cached
+        - ./code:/var/www:cached
         - ./config/php-worker/supervisord.d:/etc/supervisord.d
       depends_on:
         - workspace
@@ -91,7 +91,7 @@ services:
           - PHP_UPSTREAM_CONTAINER=php-fpm
           - PHP_UPSTREAM_PORT=9000
       volumes:
-        - ../:/var/www:cached
+        - ./code:/var/www:cached
         - ./config/nginx/sites:/etc/nginx/sites-available
         - ./store/nginx/logs:/var/log/nginx
       ports:

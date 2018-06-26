@@ -38,6 +38,13 @@ docker exec -u devsquad -it blog_workspace zsh
 
 ## Start Laravel
 
+```bash
+cd ~
+composer create-project --prefer-dist laravel/laravel blog
+rm -Rf /var/www/* 
+mv ~/blog/* /var/www
+rm -Rf ~/blog
+```
 
 ## Docker
 
