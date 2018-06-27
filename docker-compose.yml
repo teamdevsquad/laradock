@@ -31,7 +31,7 @@ services:
           - GIT_USER_EMAIL=${GIT_USER_EMAIL}
           - TZ=UTC
       volumes:
-        - ./code:/var/www:cached
+        - ${CODE_FOLDER}:/var/www:cached
         - ./config/workspace/custom:/opt/custom
         - ./config/workspace/ssh:/home/devsquad/.ssh
       extra_hosts:
@@ -52,7 +52,7 @@ services:
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ./code:/var/www:cached
+        - ${CODE_FOLDER}:/var/www:cached
       expose:
         - "9000"
       extra_hosts:
@@ -73,7 +73,7 @@ services:
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ./code:/var/www:cached
+        - ${CODE_FOLDER}:/var/www:cached
         - ./config/php-worker/supervisord.d:/etc/supervisord.d
       depends_on:
         - workspace
@@ -92,7 +92,7 @@ services:
           - PHP_UPSTREAM_CONTAINER=php-fpm
           - PHP_UPSTREAM_PORT=9000
       volumes:
-        - ./code:/var/www:cached
+        - ${CODE_FOLDER}:/var/www:cached
         - ./config/nginx/sites:/etc/nginx/sites-available
         - ./store/nginx/logs:/var/log/nginx
       ports:
