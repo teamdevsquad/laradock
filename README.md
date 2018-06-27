@@ -22,11 +22,13 @@ Customize the bashrc_aliases.sh file
 cd config/workspace/custom; cp bashrc_aliases.sh.example bashrc_aliases.sh; cd -
 ```
 
-Add existing ssh keys to your configuration
+Add existing [ssh keys](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/) 
+to your workspace configuration
 
 ```
 cp ~/.ssh/id_rsa* config/workspace/custom/ssh
 ```
+
 
 ## Start Docker
 
