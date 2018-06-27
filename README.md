@@ -59,7 +59,7 @@ function docker_bash() {
 }
 ```
 
-## Project Setup
+## Code Setup
 
 Make sure the workspace container is running and start a new **Zsh** session
 
@@ -82,7 +82,9 @@ Clone an existing project
 git clone git@github.com:teamdevsquad/laradoc.git /var/www
 ```
 
-Laravel setup
+## Laravel setup
+
+From the workspace container run
 
 ```bash
 cd /var/www
@@ -100,6 +102,44 @@ Access your application services
 * Main - http://blog.test
 * Adminer - http://adminer.blog.test:8080
 * Maildev - http://maildev.blog.test:8181
+
+## Git Flow Setup
+
+From the workspace container run
+
+```bash
+cd /var/www
+
+git flow init
+```
+
+Follow the instruction and aswer the following
+
+* Branch name for production releases? **master**
+* Branch name for "next release" development? **develop**
+* Feature branches? **feature**
+* Bugfix branches? [] **bugfix**
+* Release branches? [] **release**
+* Hotfix branches? [] **hotfix**
+* Support branches? [] **support**
+* Version tag prefix? []
+* Hooks and filters directory? **/var/www/.git/hooks**
+
+After that, you gitflow configuration (located in /var/www/.gitconfig) will be as follows
+
+```
+[gitflow "branch"]
+	master = master
+	develop = develop
+[gitflow "prefix"]
+	feature = feature/
+	bugfix = bugfix/
+	release = release/
+	hotfix = hotfix/
+	support = support/
+[gitflow "path"]
+	hooks = /var/www/.git/hooks
+```
 
 ## Docker
 
