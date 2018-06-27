@@ -29,7 +29,6 @@ to your workspace configuration
 cp ~/.ssh/id_rsa* config/workspace/custom/ssh
 ```
 
-
 ## Start Docker
 
 ```bash
@@ -51,7 +50,7 @@ docker exec -u devsquad -it blog_workspace zsh
 ```
 
 For simplicity, you can add this function to your `.bashrc` (or equivalent) 
-and start a new **Zsh** session in the workspace container by running `docker_bash`
+and start a new **Zsh** session in the workspace container by running `docker_bash`.
 
 ```bash
 function docker_bash() {
@@ -96,9 +95,11 @@ php artisan key:generate
 php artisan storage:link
 ```
 
-Access
+Access your application services
 
-http://blog.test
+* Main - http://blog.test
+* Adminer - http://adminer.blog.test:8080
+* Maildev - http://maildev.blog.test:8181
 
 ## Docker
 

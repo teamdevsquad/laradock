@@ -96,8 +96,8 @@ services:
         - ./config/nginx/sites:/etc/nginx/sites-available
         - ./store/nginx/logs:/var/log/nginx
       ports:
-        - "80:80"
-        - "443:443"
+        - "${HTTP_PORT}:80"
+        - "${HTTPS_PORT}:443"
       depends_on:
         - php-fpm
       networks:
@@ -112,7 +112,7 @@ services:
       volumes:
         - ./store/postgres:/var/lib/postgresql/data
       ports:
-        - "5432:5432"
+        - "${PGSQL_PORT}:5432"
       environment:
         - POSTGRES_DB=${DB_DATABASE}
         - POSTGRES_USER=${DB_USERNAME}
@@ -128,7 +128,7 @@ services:
       volumes:
         - ./store/redis:/data
       ports:
-        - "6379:6379"
+        - "${REDIS_PORT}:6379"
       networks:
         - backend
 
@@ -139,7 +139,7 @@ services:
       build:
         context: ./config/adminer
       ports:
-        - "8080:8080"
+        - "${ADMINER_PORT}:8080"
       depends_on:
         - php-fpm
       networks:
@@ -152,8 +152,8 @@ services:
       domainname: maildev.${APP_NAME}.test
       build: ./config/maildev
       ports:
-        - "8181:80"
-        - "2525:25"
+        - "${MAILDEV_PORT}:80"
+        - "${SMTP_PORT}:25"
       networks:
         - frontend
         - backend
