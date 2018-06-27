@@ -117,7 +117,7 @@ Follow the instruction and aswer the following
 
 * Branch name for production releases? **master**
 * Branch name for "next release" development? **develop**
-* Feature branches? **feature**
+* Feature branches? [] **feature**
 * Bugfix branches? [] **bugfix**
 * Release branches? [] **release**
 * Hotfix branches? [] **hotfix**
