@@ -19,7 +19,13 @@ cp .env-example .env
 Customize the bashrc_aliases.sh file
 
 ```
-cd config/workspace/custom && cp bashrc_aliases.sh.example bashrc_aliases.sh
+cd config/workspace/custom; cp bashrc_aliases.sh.example bashrc_aliases.sh; cd -
+```
+
+Add existing ssh keys to your configuration
+
+```
+cp ~/.ssh/id_rsa* config/workspace/custom/ssh
 ```
 
 ## Start Docker
@@ -42,14 +48,31 @@ As devsquad:
 docker exec -u devsquad -it blog_workspace zsh
 ```
 
-## Start Laravel
+For simplicity, you can add this function to your `.bashrc` (or equivalent) 
+and login into docker by running `docker_login`
 
 ```bash
-cd ~
-composer create-project --prefer-dist laravel/laravel blog
+function docker_login() {
+  export $(cat .env | xargs);
+  docker exec -u devsquad -it ${APP_NAME}_workspace zsh;
+}
+```
+
+## Project Setup
+
+Create a new project
+
+```bash
+cd ~; composer create-project --prefer-dist laravel/laravel blog
 rm -Rf /var/www/* 
 mv ~/blog/* /var/www
 rm -Rf ~/blog
+```
+
+Clone an existing project
+
+```bash
+cd ~; git clone git@github.com:teamdevsquad/laradoc.git /var/www
 ```
 
 ## Docker
