@@ -33,6 +33,7 @@ services:
       volumes:
         - ./code:/var/www:cached
         - ./config/workspace/custom:/opt/custom
+        - ./config/workspace/ssh:/home/devsquad/.ssh
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       tty: true
