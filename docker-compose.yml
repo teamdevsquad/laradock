@@ -54,7 +54,7 @@ services:
       volumes:
         - ${CODE_FOLDER}:/var/www:cached
       expose:
-        - "9000"
+        - "${XDEBUG_PORT}"
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       environment:
