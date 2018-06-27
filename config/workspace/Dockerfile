@@ -227,7 +227,19 @@ RUN echo "" >> ~/.gitconfig \
     && echo "\tname = Daniel Camargo" >> ~/.gitconfig \
     && echo "\temail = daniel@slcdevshop.com" >> ~/.gitconfig \
     && echo "[core]" >> ~/.gitconfig \
-    && echo "\texcludesfile = ~/.gitignore" >> ~/.gitconfig
+    && echo "\texcludesfile = ~/.gitignore" >> ~/.gitconfig \
+    && echo "[gitflow \"branch\"]" >> ~/.gitconfig \
+    && echo "\tmaster = master" >> ~/.gitconfig \
+    && echo "\tdevelop = develop" >> ~/.gitconfig \
+    && echo "[gitflow \"prefix\"]" >> ~/.gitconfig \
+    && echo "\tfeature = feature/" >> ~/.gitconfig \
+    && echo "\tbugfix = bugfix/" >> ~/.gitconfig \
+    && echo "\trelease = release/" >> ~/.gitconfig \
+    && echo "\thotfix = hotfix/" >> ~/.gitconfig \
+    && echo "\tsupport = support/" >> ~/.gitconfig \
+    && echo "[gitflow \"path\"]" >> ~/.gitconfig \
+    && echo "\thooks = /var/www/.git/hooks" >> ~/.gitconfig \
+    && echo "" >> ~/.gitconfig
 
 USER root
 
