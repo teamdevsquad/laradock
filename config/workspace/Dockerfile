@@ -248,6 +248,14 @@ RUN curl --insecure --silent --location  https://raw.githubusercontent.com/peter
     && rm ~/gitflow-installer.sh
 
 ###########################################################################
+# PYTHON:
+###########################################################################
+
+RUN apt-get -y install python python-pip python-dev build-essential  \
+  && python -m pip install --upgrade pip  \
+  && python -m pip install --upgrade virtualenv
+
+###########################################################################
 # Check PHP version:
 ###########################################################################
 
