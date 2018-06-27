@@ -34,7 +34,7 @@ cp ~/.ssh/id_rsa* config/workspace/custom/ssh
 docker-compose up
 ```
 
-## Login
+## Execute Commands
 
 As root:
 
@@ -49,16 +49,22 @@ docker exec -u devsquad -it blog_workspace zsh
 ```
 
 For simplicity, you can add this function to your `.bashrc` (or equivalent) 
-and login into docker by running `docker_login`
+and start a new **Zsh** session in the workspace container by running `docker_bash`
 
 ```bash
-function docker_login() {
+function docker_bash() {
   export $(cat .env | xargs);
   docker exec -u devsquad -it ${APP_NAME}_workspace zsh;
 }
 ```
 
 ## Project Setup
+
+Make sure the workspace container is running and start a new **Zsh** session
+
+```
+docker exec -u devsquad -it blog_workspace zsh
+``` 
 
 Create a new project
 
@@ -72,8 +78,25 @@ rm -Rf ~/blog
 Clone an existing project
 
 ```bash
-cd ~; git clone git@github.com:teamdevsquad/laradoc.git /var/www
+git clone git@github.com:teamdevsquad/laradoc.git /var/www
 ```
+
+Laravel setup
+
+```bash
+cd /var/www
+
+composer install
+yarn
+
+cp .env.example .env
+php artisan key:generate
+php artisan storage:link
+```
+
+Access
+
+http://blog.test
 
 ## Docker
 
