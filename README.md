@@ -13,7 +13,7 @@ git clone https://github.com/teamdevsquad/laravel-docker.git blog
 Customize the .env file
 
 ```bash
-cp .env-example .env
+cp .env.example .env
 ```
 
 Customize the bashrc_aliases.sh file
