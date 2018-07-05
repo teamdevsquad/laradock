@@ -40,7 +40,9 @@ RUN apt-get -y update \
   && rm /root/install.sh \
   && chsh -s /bin/zsh \
   && chsh -s /bin/zsh devsquad \
-  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /root/.zshrc
+  && curl -fsSL https://raw.githubusercontent.com/oskarkrawczyk/honukai-iterm/master/honukai.zsh-theme -o /root/.oh-my-zsh/custom/themes/honukai.zsh-theme \
+  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /root/.zshrc \
+  && sed -i 's/robbyrussell/honukai/' /root/.zshrc
 
 USER devsquad
 
@@ -48,7 +50,9 @@ RUN curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/instal
   && export ZSH=/home/devsquad/.oh-my-zsh \
   && bash /home/devsquad/install.sh \
   && rm /home/devsquad/install.sh \
-  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /home/devsquad/.zshrc
+  && curl -fsSL https://raw.githubusercontent.com/oskarkrawczyk/honukai-iterm/master/honukai.zsh-theme -o /home/devsquad/.oh-my-zsh/custom/themes/honukai.zsh-theme \
+  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /home/devsquad/.zshrc \
+  && sed -i 's/robbyrussell/honukai/' /home/devsquad/.zshrc
 
 ###########################################################################
 # User Aliases
