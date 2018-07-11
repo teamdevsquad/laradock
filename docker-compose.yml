@@ -122,6 +122,10 @@ services:
       container_name: blog_adminer
       build:
         context: ./docker/config/adminer
+        args:
+          - POSTGRES_DB=blog
+          - POSTGRES_USER=blog
+          - POSTGRES_PASSWORD=secret
       depends_on:
         - php-fpm
       networks:

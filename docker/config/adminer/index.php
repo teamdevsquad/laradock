@@ -14,9 +14,9 @@ namespace docker {
                 $form = str_replace('name="auth[server]" value="" title="hostname[:port]"', 'name="auth[server]" value="postgres" title="hostname[:port]"', $form);
                 $form = str_replace('<option value="server" selected>', '<option value="server">', $form);
                 $form = str_replace('<option value="pgsql">', '<option value="pgsql" selected>', $form);
-                $form = str_replace('id="username" value=""', 'id="username" value="blog"', $form);
-                $form = str_replace('name="auth[password]"', 'name="auth[password]" value="secret"', $form);
-                $form = str_replace('name="auth[db]" value=""', 'name="auth[db]" value="blog"', $form);
+                $form = str_replace('id="username" value=""', 'id="username" value="USERNAME"', $form);
+                $form = str_replace('name="auth[password]"', 'name="auth[password]" value="PASSWORD"', $form);
+                $form = str_replace('name="auth[db]" value=""', 'name="auth[db]" value="DATABASE"', $form);
 
                 echo $form;
 
