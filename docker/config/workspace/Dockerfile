@@ -291,12 +291,10 @@ RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
 
 USER devsquad
 
-COPY ./setup.sh /home/devsquad/.setup
-
-RUN echo "" >> ~/.zshrc && \
-    echo "# Setup" >> ~/.zshrc && \
-    echo "  . /home/devsquad/.setup " >> ~/.zshrc && \
-	echo "" >> ~/.zshrc
+RUN mkdir /home/devsquad/history \
+    && touch /home/devsquad/history/.bash_history \
+    && echo "# Change history location" >> ~/.zshrc \
+    && echo "export HISTFILE=/home/devsquad/history/.bash_history " >> ~/.zshrc
 
 USER root
 

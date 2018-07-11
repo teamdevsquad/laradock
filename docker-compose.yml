@@ -29,7 +29,7 @@ services:
       volumes:
         - ./:/var/www:cached
         - ./docker/config/workspace/.aliases:/home/devsquad/.aliases
-        - ./docker/data/.zsh_history:/home/devsquad/.zsh_history
+        - ./docker/data/history:/home/devsquad/history
         - ./docker/data/.ssh:/home/devsquad/.ssh
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
