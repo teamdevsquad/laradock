@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 networks:
   frontend:
@@ -13,6 +13,12 @@ volumes:
     driver: local
   redis:
     driver: local
+
+x-database:
+  &default-database
+    - POSTGRES_DB=blog
+    - POSTGRES_USER=blog
+    - POSTGRES_PASSWORD=secret
 
 services:
 
@@ -110,10 +116,7 @@ services:
         - ./docker/data/postgres:/var/lib/postgresql/data
       ports:
         - "${PGSQL_PORT}:5432"
-      environment:
-        - POSTGRES_DB=blog
-        - POSTGRES_USER=blog
-        - POSTGRES_PASSWORD=secret
+      environment: *default-database
       networks:
         - backend
 
@@ -122,10 +125,7 @@ services:
       container_name: blog_adminer
       build:
         context: ./docker/config/adminer
-        args:
-          - POSTGRES_DB=blog
-          - POSTGRES_USER=blog
-          - POSTGRES_PASSWORD=secret
+        args: *default-database
       depends_on:
         - php-fpm
       networks:
