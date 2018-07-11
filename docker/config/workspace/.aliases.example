@@ -1,0 +1,4 @@
+alias pa='php artisan'
+alias code='cd /var/www'
+alias watch='npm run watch'
+alias lalau='php artisan laroute:generate'

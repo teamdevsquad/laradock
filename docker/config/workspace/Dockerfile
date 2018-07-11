@@ -27,10 +27,23 @@ ENV TZ ${TZ}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ###########################################################################
+# Utils
+###########################################################################
+
+USER root
+
+RUN apt-get -y update \
+    && apt-get -y install tree \
+    && apt-get -y install iputils-ping
+
+###########################################################################
 # Oh My Zsh
 ###########################################################################
 
 USER root
+
+COPY ./.box-name /root/.box-name
+COPY ./.box-name /home/devsquad/.box-name
 
 RUN apt-get -y update \
   && apt-get -y install zsh \
@@ -40,9 +53,7 @@ RUN apt-get -y update \
   && rm /root/install.sh \
   && chsh -s /bin/zsh \
   && chsh -s /bin/zsh devsquad \
-  && curl -fsSL https://raw.githubusercontent.com/oskarkrawczyk/honukai-iterm/master/honukai.zsh-theme -o /root/.oh-my-zsh/custom/themes/honukai.zsh-theme \
-  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /root/.zshrc \
-  && sed -i 's/robbyrussell/honukai/' /root/.zshrc
+  && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /root/.zshrc
 
 USER devsquad
 
@@ -52,7 +63,7 @@ RUN curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/instal
   && rm /home/devsquad/install.sh \
   && curl -fsSL https://raw.githubusercontent.com/oskarkrawczyk/honukai-iterm/master/honukai.zsh-theme -o /home/devsquad/.oh-my-zsh/custom/themes/honukai.zsh-theme \
   && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /home/devsquad/.zshrc \
-  && sed -i 's/robbyrussell/honukai/' /home/devsquad/.zshrc
+  && sed -i 's/robbyrussell/honukai/g' /home/devsquad/.zshrc
 
 ###########################################################################
 # User Aliases
@@ -62,8 +73,8 @@ USER devsquad
 
 RUN echo "" >> ~/.zshrc && \
     echo "# Load Custom Aliases" >> ~/.zshrc && \
-    echo "if [ -f /opt/custom/bashrc_aliases.sh ]; then" >> ~/.zshrc && \
-    echo "  . /opt/custom/bashrc_aliases.sh " >> ~/.zshrc && \
+    echo "if [ -f /home/devsquad/.aliases ]; then" >> ~/.zshrc && \
+    echo "  . /home/devsquad/.aliases " >> ~/.zshrc && \
     echo "fi" >> ~/.zshrc && \
 	echo "" >> ~/.zshrc
 
@@ -94,8 +105,7 @@ RUN echo "" >> ~/.zshrc && \
 
 USER root
 
-COPY ./crontab /etc/cron.d
-
+COPY ./crontab /etc/cron.d/devsquad
 RUN chmod -R 644 /etc/cron.d
 
 ###########################################################################
@@ -210,7 +220,27 @@ RUN apt-get update \
   && rm chromedriver_linux64.zip
 
 ###########################################################################
-# Git:
+# PYTHON:
+###########################################################################
+
+USER root
+
+RUN apt-get -y install python python-pip python-dev build-essential  \
+  && python -m pip install --upgrade pip  \
+  && python -m pip install --upgrade virtualenv
+
+###########################################################################
+# HEROKU CLI
+###########################################################################
+
+USER root
+
+RUN curl -fsSL https://cli-assets.heroku.com/install.sh -o /root/install.sh \
+         && bash /root/install.sh \
+         && rm /root/install.sh
+
+###########################################################################
+# Git Configuration:
 ###########################################################################
 
 USER devsquad
@@ -221,29 +251,15 @@ ENV GIT_USER_NAME ${GIT_USER_NAME}
 ARG GIT_USER_EMAIL="johndoe@example.com"
 ENV GIT_USER_EMAIL ${GIT_USER_EMAIL}
 
-RUN echo "" >> ~/.gitignore \
-    && echo ".vscode" >> ~/.gitignore \
-    && echo ".idea" >> ~/.gitignore \
-    && echo ".DS_STORE" >> ~/.gitignore
-
-RUN echo "" >> ~/.gitconfig \
-    && echo "[user]" >> ~/.gitconfig \
-    && echo "\tname = Daniel Camargo" >> ~/.gitconfig \
-    && echo "\temail = daniel@slcdevshop.com" >> ~/.gitconfig \
-    && echo "[core]" >> ~/.gitconfig \
-    && echo "\texcludesfile = ~/.gitignore" >> ~/.gitconfig \
-    && echo "[gitflow \"branch\"]" >> ~/.gitconfig \
-    && echo "\tmaster = master" >> ~/.gitconfig \
-    && echo "\tdevelop = develop" >> ~/.gitconfig \
-    && echo "[gitflow \"prefix\"]" >> ~/.gitconfig \
-    && echo "\tfeature = feature/" >> ~/.gitconfig \
-    && echo "\tbugfix = bugfix/" >> ~/.gitconfig \
-    && echo "\trelease = release/" >> ~/.gitconfig \
-    && echo "\thotfix = hotfix/" >> ~/.gitconfig \
-    && echo "\tsupport = support/" >> ~/.gitconfig \
-    && echo "[gitflow \"path\"]" >> ~/.gitconfig \
-    && echo "\thooks = /var/www/.git/hooks" >> ~/.gitconfig \
-    && echo "" >> ~/.gitconfig
+RUN git config --global user.name ${GIT_USER_NAME} \
+    && git config --global user.email ${GIT_USER_EMAIL} \
+    && git config --global push.default simple \
+    && git config --global core.editor "vim" \
+    && echo "" >> ~/.gitignore_global \
+    && echo ".vscode" >> ~/.gitignore_global \
+    && echo ".idea" >> ~/.gitignore_global \
+    && echo ".DS_STORE" >> ~/.gitignore_global \
+    && git config --global core.excludesfile ~/.gitignore_global
 
 USER root
 
@@ -251,13 +267,15 @@ RUN curl --insecure --silent --location  https://raw.githubusercontent.com/peter
     && bash ~/gitflow-installer.sh install develop \
     && rm ~/gitflow-installer.sh
 
+
 ###########################################################################
-# PYTHON:
+# Required Modules
 ###########################################################################
 
-RUN apt-get -y install python python-pip python-dev build-essential  \
-  && python -m pip install --upgrade pip  \
-  && python -m pip install --upgrade virtualenv
+USER root
+
+RUN apt-get -y update \
+    && apt-get -y install php7.2-soap
 
 ###########################################################################
 # Check PHP version:
@@ -271,11 +289,20 @@ RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
 # Final Touch
 ###########################################################################
 
+USER devsquad
+
+COPY ./setup.sh /home/devsquad/.setup
+
+RUN echo "" >> ~/.zshrc && \
+    echo "# Setup" >> ~/.zshrc && \
+    echo "  . /home/devsquad/.setup " >> ~/.zshrc && \
+	echo "" >> ~/.zshrc
+
 USER root
+
+WORKDIR /var/www
 
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm /var/log/lastlog /var/log/faillog
-
-WORKDIR /var/www

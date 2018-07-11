@@ -17,21 +17,20 @@ volumes:
 services:
 
     workspace:
-      restart: on-failure
-      container_name: ${APP_NAME}_workspace
-      domainname: workspace.${APP_NAME}.test
+      container_name: blog_workspace
       build:
-        context: ./config/workspace
+        context: ./docker/config/workspace
         args:
-          - PHP_VERSION=${PHP_VERSION}
-          - CHROME_DRIVER_VERSION=${CHROME_DRIVER_VERSION}
-          - NODE_VERSION=${NODE_VERSION}
-          - YARN_VERSION=${YARN_VERSION}
+          - PHP_VERSION=7.2
+          - CHROME_DRIVER_VERSION=2.32
+          - NODE_VERSION=9.11.2
+          - YARN_VERSION=latest
           - TZ=UTC
       volumes:
-        - ${CODE_FOLDER}:/var/www:cached
-        - ./config/workspace/custom:/opt/custom
-        - ./config/workspace/ssh:/home/devsquad/.ssh
+        - ./:/var/www:cached
+        - ./docker/config/workspace/.aliases:/home/devsquad/.aliases
+        - ./docker/data/.zsh_history:/home/devsquad/.zsh_history
+        - ./docker/data/.ssh:/home/devsquad/.ssh
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       tty: true
@@ -43,14 +42,13 @@ services:
 
     php-fpm:
       restart: on-failure
-      container_name: ${APP_NAME}_php-fpm
-      domainname: php-fpm.${APP_NAME}.test
+      container_name: blog_php-fpm
       build:
-        context: ./config/php-fpm
+        context: ./docker/config/php-fpm
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ${CODE_FOLDER}:/var/www:cached
+        - ./:/var/www:cached
       expose:
         - "${XDEBUG_PORT}"
       extra_hosts:
@@ -64,15 +62,14 @@ services:
 
     php-worker:
       restart: on-failure
-      container_name: ${APP_NAME}_php-worker
-      domainname: php-worker.${APP_NAME}.test
+      container_name: blog_php-worker
       build:
-        context: ./config/php-worker
+        context: ./docker/config/php-worker
         args:
           - PHP_VERSION=7.2
       volumes:
-        - ${CODE_FOLDER}:/var/www:cached
-        - ./config/php-worker/supervisord.d:/etc/supervisord.d
+        - ./:/var/www:cached
+        - ./docker/config/php-worker/supervisord.d:/etc/supervisord.d
       depends_on:
         - workspace
       extra_hosts:
@@ -82,76 +79,51 @@ services:
 
     nginx:
       restart: on-failure
-      container_name: ${APP_NAME}_nginx
-      domainname: ${APP_NAME}.test
+      container_name: blog_nginx
+      domainname: blog.test
       build:
-        context: ./config/nginx
+        context: ./docker/config/nginx
         args:
           - PHP_UPSTREAM_CONTAINER=php-fpm
           - PHP_UPSTREAM_PORT=9000
       volumes:
-        - ${CODE_FOLDER}:/var/www:cached
-        - ./config/nginx/sites:/etc/nginx/sites-available
-        - ./store/nginx/logs:/var/log/nginx
+        - ./:/var/www:cached
+        - ./docker/config/nginx/sites:/etc/nginx/sites-available
+        - ./docker/data/nginx:/var/log/nginx
       ports:
         - "${HTTP_PORT}:80"
         - "${HTTPS_PORT}:443"
       depends_on:
         - php-fpm
+        - adminer
+      links:
+        - adminer
       networks:
         - frontend
         - backend
 
     postgres:
       restart: on-failure
-      container_name: ${APP_NAME}_postgres
-      domainname: postgres.${APP_NAME}.test
-      build: ./config/postgres
+      container_name: blog_postgres
+      build: ./docker/config/postgres
       volumes:
-        - ./store/postgres:/var/lib/postgresql/data
+        - ./docker/data/postgres:/var/lib/postgresql/data
       ports:
         - "${PGSQL_PORT}:5432"
       environment:
-        - POSTGRES_DB=${DB_DATABASE}
-        - POSTGRES_USER=${DB_USERNAME}
-        - POSTGRES_PASSWORD=${DB_PASSWORD}
-      networks:
-        - backend
-
-    redis:
-      restart: on-failure
-      container_name: ${APP_NAME}_redis
-      domainname: redis.${APP_NAME}.test
-      build: ./config/redis
-      volumes:
-        - ./store/redis:/data
-      ports:
-        - "${REDIS_PORT}:6379"
+        - POSTGRES_DB=blog
+        - POSTGRES_USER=blog
+        - POSTGRES_PASSWORD=secret
       networks:
         - backend
 
     adminer:
       restart: on-failure
-      container_name: ${APP_NAME}_adminer
-      domainname: adminer.${APP_NAME}.test
+      container_name: blog_adminer
       build:
-        context: ./config/adminer
-      ports:
-        - "${ADMINER_PORT}:8080"
+        context: ./docker/config/adminer
       depends_on:
         - php-fpm
-      networks:
-        - frontend
-        - backend
-
-    maildev:
-      restart: on-failure
-      container_name: ${APP_NAME}_maildev
-      domainname: maildev.${APP_NAME}.test
-      build: ./config/maildev
-      ports:
-        - "${MAILDEV_PORT}:80"
-        - "${SMTP_PORT}:25"
       networks:
         - frontend
         - backend

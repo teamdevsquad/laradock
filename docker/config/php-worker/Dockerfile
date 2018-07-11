@@ -30,8 +30,12 @@ RUN pecl channel-update pecl.php.net && pecl install memcached mcrypt-1.0.1 && d
 RUN apk --update add postgresql-dev \
         && docker-php-ext-install pdo_pgsql
 
-RUN rm /var/cache/apk/* \
-    && mkdir -p /var/www
+###########################################################################
+# Required Modules
+###########################################################################
+
+RUN apk --update add libxml2-dev \
+        && docker-php-ext-install soap
 
 #
 #--------------------------------------------------------------------------
@@ -68,5 +72,8 @@ RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
 # Final Touch
 #--------------------------------------------------------------------------
 #
+
+RUN rm /var/cache/apk/* \
+    && mkdir -p /var/www
 
 WORKDIR /etc/supervisor/conf.d/
