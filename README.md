@@ -1,5 +1,5 @@
 # DevSquad Laravel Docker
 
-- [Getting Started](Home#getting-started)
-  - [Project Configuration](Home#docker-project-configuration)
-  - [Developer Configuration](Home#docker-developer-configuration)
+A Docker configuration based on `laradock`. 
+
+[Read Docs](https://github.com/teamdevsquad/laradock/wiki)
