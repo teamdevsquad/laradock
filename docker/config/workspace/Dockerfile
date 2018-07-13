@@ -42,8 +42,8 @@ RUN apt-get -y update \
 
 USER root
 
-COPY ./.box-name /root/.box-name
-COPY ./.box-name /home/devsquad/.box-name
+COPY ./box-name /root/.box-name
+COPY ./box-name /home/devsquad/.box-name
 
 RUN apt-get -y update \
   && apt-get -y install zsh \

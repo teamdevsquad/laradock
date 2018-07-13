@@ -14,22 +14,29 @@ volumes:
   redis:
     driver: local
 
-x-variables: 
+x-variables:
+  # Container names
+  - &nginx blog_nginx
+  - &php-fpm blog_php-fpm
+  - &adminer blog_adminer
+  - &postgres blog_postgres
+  - &workspace blog_workspace
+  - &php-worker blog_php-worker
+
+  # Domain
+  - &default-domain blog.vcap.me
+  - &adminer-domain adminer.blog.vcap.me
+
+  # Versions
   - &php-version PHP_VERSION=7.2
   - &node-version NODE_VERSION=9.11.2
   - &yarn-version YARN_VERSION=latest
   - &chrome-driver-version CHROME_DRIVER_VERSION=2.32
 
-x-database:
-  &default-database
-    - POSTGRES_DB=blog
-    - POSTGRES_USER=blog
-    - POSTGRES_PASSWORD=secret
-
 services:
 
     workspace:
-      container_name: blog_workspace
+      container_name: *workspace
       build:
         context: ./docker/config/workspace
         args:
@@ -43,7 +50,7 @@ services:
         - ./docker/data/history:/home/devsquad/history
         - ./docker/data/.ssh:/home/devsquad/.ssh
       extra_hosts:
-        - "dockerhost:${YOUR_IP_ADDRESS}"
+        - "dockerhost:${YOUR_IP_ADDRESS:-172.16.0.100}"
       tty: true
       environment:
         - PHP_IDE_CONFIG=serverName=devsquad-server
@@ -53,7 +60,7 @@ services:
 
     php-fpm:
       restart: on-failure
-      container_name: blog_php-fpm
+      container_name: *php-fpm
       build:
         context: ./docker/config/php-fpm
         args:
@@ -63,7 +70,7 @@ services:
       expose:
         - "${XDEBUG_PORT:-9000}"
       extra_hosts:
-        - "dockerhost:${YOUR_IP_ADDRESS}"
+        - "dockerhost:${YOUR_IP_ADDRESS:-172.16.0.100}"
       environment:
         - PHP_IDE_CONFIG=serverName=devsquad-server
       depends_on:
@@ -73,7 +80,7 @@ services:
 
     php-worker:
       restart: on-failure
-      container_name: blog_php-worker
+      container_name: *php-worker
       build:
         context: ./docker/config/php-worker
         args:
@@ -84,14 +91,14 @@ services:
       depends_on:
         - workspace
       extra_hosts:
-        - "dockerhost:${YOUR_IP_ADDRESS}"
+        - "dockerhost:${YOUR_IP_ADDRESS:-172.16.0.100}"
       networks:
         - backend
 
     nginx:
       restart: on-failure
-      container_name: blog_nginx
-      domainname: blog.vcap.me
+      container_name: *nginx
+      domainname: *default-domain
       build:
         context: ./docker/config/nginx
         args:
@@ -112,14 +119,14 @@ services:
       networks:
         frontend:
           aliases:
-            - blog.vcap.me
+            - *default-domain
         backend:
           aliases:
-            - blog.vcap.me
+            - *default-domain
 
     postgres:
       restart: on-failure
-      container_name: blog_postgres
+      container_name: *postgres
       build: ./docker/config/postgres
       volumes:
         - ./docker/data/postgres:/var/lib/postgresql/data
@@ -131,7 +138,7 @@ services:
 
     adminer:
       restart: on-failure
-      container_name: blog_adminer
+      container_name: *adminer
       build:
         context: ./docker/config/adminer
         args: *default-database
