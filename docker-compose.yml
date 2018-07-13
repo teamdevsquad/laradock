@@ -27,6 +27,11 @@ x-variables:
   - &default-domain blog.vcap.me
   - &adminer-domain adminer.blog.vcap.me
 
+  # Database
+  - &db-name blog
+  - &db-username blog
+  - &db-password secret
+
   # Versions
   - &php-version PHP_VERSION=7.2
   - &node-version NODE_VERSION=9.11.2
@@ -132,7 +137,10 @@ services:
         - ./docker/data/postgres:/var/lib/postgresql/data
       ports:
         - "${POSTGRES_PORT:-5432}:5432"
-      environment: *default-database
+      environment:
+        - POSTGRES_DB=*db-name
+        - POSTGRES_USERNAME=*db-username
+        - POSTGRES_PASSWORD=*db-password
       networks:
         - backend
 
@@ -141,7 +149,10 @@ services:
       container_name: *adminer
       build:
         context: ./docker/config/adminer
-        args: *default-database
+        args:
+          - POSTGRES_DB=*db-name
+          - POSTGRES_USERNAME=*db-username
+          - POSTGRES_PASSWORD=*db-password
       depends_on:
         - php-fpm
       networks:
