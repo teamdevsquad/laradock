@@ -14,6 +14,12 @@ volumes:
   redis:
     driver: local
 
+x-variables: 
+  - &php-version PHP_VERSION=7.2
+  - &node-version NODE_VERSION=9.11.2
+  - &yarn-version YARN_VERSION=latest
+  - &chrome-driver-version CHROME_DRIVER_VERSION=2.32
+
 x-database:
   &default-database
     - POSTGRES_DB=blog
@@ -27,11 +33,10 @@ services:
       build:
         context: ./docker/config/workspace
         args:
-          - PHP_VERSION=7.2
-          - CHROME_DRIVER_VERSION=2.32
-          - NODE_VERSION=9.11.2
-          - YARN_VERSION=latest
-          - TZ=UTC
+          - *chrome-driver-version
+          - *yarn-version
+          - *php-version
+          - *node-version
       volumes:
         - ./:/var/www:cached
         - ./docker/config/workspace/.aliases:/home/devsquad/.aliases
@@ -52,11 +57,11 @@ services:
       build:
         context: ./docker/config/php-fpm
         args:
-          - PHP_VERSION=7.2
+          - *php-version
       volumes:
         - ./:/var/www:cached
       expose:
-        - "${XDEBUG_PORT}"
+        - "${XDEBUG_PORT:-9000}"
       extra_hosts:
         - "dockerhost:${YOUR_IP_ADDRESS}"
       environment:
@@ -72,7 +77,7 @@ services:
       build:
         context: ./docker/config/php-worker
         args:
-          - PHP_VERSION=7.2
+          - *php-version
       volumes:
         - ./:/var/www:cached
         - ./docker/config/php-worker/supervisord.d:/etc/supervisord.d
@@ -86,27 +91,31 @@ services:
     nginx:
       restart: on-failure
       container_name: blog_nginx
-      domainname: blog.test
+      domainname: blog.vcap.me
       build:
         context: ./docker/config/nginx
         args:
           - PHP_UPSTREAM_CONTAINER=php-fpm
-          - PHP_UPSTREAM_PORT=9000
+          - PHP_UPSTREAM_PORT=${XDEBUG_PORT:-9000}
       volumes:
         - ./:/var/www:cached
         - ./docker/config/nginx/sites:/etc/nginx/sites-available
         - ./docker/data/nginx:/var/log/nginx
       ports:
-        - "${HTTP_PORT}:80"
-        - "${HTTPS_PORT}:443"
+        - "${HTTP_PORT:-80}:80"
+        - "${HTTPS_PORT:-443}:443"
       depends_on:
         - php-fpm
         - adminer
       links:
         - adminer
       networks:
-        - frontend
-        - backend
+        frontend:
+          aliases:
+            - blog.vcap.me
+        backend:
+          aliases:
+            - blog.vcap.me
 
     postgres:
       restart: on-failure
@@ -115,7 +124,7 @@ services:
       volumes:
         - ./docker/data/postgres:/var/lib/postgresql/data
       ports:
-        - "${PGSQL_PORT}:5432"
+        - "${POSTGRES_PORT:-5432}:5432"
       environment: *default-database
       networks:
         - backend
@@ -129,5 +138,4 @@ services:
       depends_on:
         - php-fpm
       networks:
-        - frontend
         - backend

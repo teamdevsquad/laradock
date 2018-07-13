@@ -2,7 +2,7 @@ ARG PHP_VERSION=${PHP_VERSION}
 
 FROM laradock/workspace:2.2-${PHP_VERSION}
 
-LABEL maintainer="Daniel Camargo <daniel@devsquad.com"
+LABEL maintainer="Team DevSquad <team@devsquad.com>"
 
 USER root
 
@@ -245,28 +245,13 @@ RUN curl -fsSL https://cli-assets.heroku.com/install.sh -o /root/install.sh \
 
 USER devsquad
 
-ARG GIT_USER_NAME="John Doe"
-ENV GIT_USER_NAME ${GIT_USER_NAME}
-
-ARG GIT_USER_EMAIL="johndoe@example.com"
-ENV GIT_USER_EMAIL ${GIT_USER_EMAIL}
-
-RUN git config --global user.name ${GIT_USER_NAME} \
-    && git config --global user.email ${GIT_USER_EMAIL} \
-    && git config --global push.default simple \
+RUN git config --global push.default simple \
     && git config --global core.editor "vim" \
     && echo "" >> ~/.gitignore_global \
     && echo ".vscode" >> ~/.gitignore_global \
     && echo ".idea" >> ~/.gitignore_global \
     && echo ".DS_STORE" >> ~/.gitignore_global \
     && git config --global core.excludesfile ~/.gitignore_global
-
-USER root
-
-RUN curl --insecure --silent --location  https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh --output ~/gitflow-installer.sh \
-    && bash ~/gitflow-installer.sh install develop \
-    && rm ~/gitflow-installer.sh
-
 
 ###########################################################################
 # Required Modules
