@@ -66,6 +66,11 @@ main() {
     exit 1
   }
 
+  mv $LARADOCK_WORKSPACE/docker $LARADOCK_FOLDER
+  mv $LARADOCK_WORKSPACE/docker-compose.yml ./docker-compose.yml
+
+  rm -Rf $LARADOCK_WORKSPACE
+
   printf "${GREEN}"
   echo ''
   echo 'DevSquad Laradock is now installed'
