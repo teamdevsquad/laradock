@@ -43,7 +43,6 @@ RUN apt-get -y update \
 USER root
 
 COPY ./box-name /root/.box-name
-COPY ./box-name /home/devsquad/.box-name
 
 RUN apt-get -y update \
   && apt-get -y install zsh \
@@ -57,6 +56,8 @@ RUN apt-get -y update \
 
 USER devsquad
 
+COPY ./box-name /home/devsquad/.box-name
+
 RUN curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -o /home/devsquad/install.sh \
   && export ZSH=/home/devsquad/.oh-my-zsh \
   && bash /home/devsquad/install.sh \
@@ -64,6 +65,16 @@ RUN curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/instal
   && curl -fsSL https://raw.githubusercontent.com/oskarkrawczyk/honukai-iterm/master/honukai.zsh-theme -o /home/devsquad/.oh-my-zsh/custom/themes/honukai.zsh-theme \
   && sed '/^#.*CASE_SENSITIVE.*/ s/^#//' /home/devsquad/.zshrc \
   && sed -i 's/robbyrussell/honukai/g' /home/devsquad/.zshrc
+
+USER root
+
+ARG BOX_NAME=${BOX_NAME}
+ENV BOX_NAME ${BOX_NAME}
+
+RUN sed -i "s/BOX_NAME/${BOX_NAME}/g"  /root/.box-name \
+    && sed -i "s/BOX_NAME/${BOX_NAME}/g"  /home/devsquad/.box-name \
+    && cat /root/.box-name \
+    && cat /home/devsquad/.box-name
 
 ###########################################################################
 # User Aliases

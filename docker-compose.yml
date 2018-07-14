@@ -15,6 +15,12 @@ volumes:
     driver: local
 
 x-variables:
+  # Versions
+  - &php-version PHP_VERSION=7.2
+  - &node-version NODE_VERSION=9.11.2
+  - &yarn-version YARN_VERSION=latest
+  - &chrome-driver-version CHROME_DRIVER_VERSION=2.32
+
   # Container names
   - &nginx blog_nginx
   - &php-fpm blog_php-fpm
@@ -23,20 +29,17 @@ x-variables:
   - &workspace blog_workspace
   - &php-worker blog_php-worker
 
-  # Domain
-  - &default-domain blog.vcap.me
-  - &adminer-domain adminer.blog.vcap.me
+  # Domains
+  - &domain-default DOMAIN_DEFAULT=blog.vcap.me
+  - &domain-adminer DOMAIN_ADMINER=adminer.vcap.me
 
   # Database
-  - &db-name POSTGRES_DB=blog
-  - &db-username POSTGRES_USERNAME=blog
+  - &db-name POSTGRES_DB=devsquad
+  - &db-username POSTGRES_USER=devsquad
   - &db-password POSTGRES_PASSWORD=secret
 
-  # Versions
-  - &php-version PHP_VERSION=7.2
-  - &node-version NODE_VERSION=9.11.2
-  - &yarn-version YARN_VERSION=latest
-  - &chrome-driver-version CHROME_DRIVER_VERSION=2.32
+  # Misc
+  - &box-name BOX_NAME=docker blog
 
 services:
 
@@ -49,6 +52,7 @@ services:
           - *yarn-version
           - *php-version
           - *node-version
+          - *box-name
       volumes:
         - ./:/var/www:cached
         - ./docker/config/workspace/.aliases:/home/devsquad/.aliases
@@ -103,10 +107,11 @@ services:
     nginx:
       restart: on-failure
       container_name: *nginx
-      domainname: *default-domain
       build:
         context: ./docker/config/nginx
         args:
+          - *domain-default
+          - *domain-adminer
           - PHP_UPSTREAM_CONTAINER=php-fpm
           - PHP_UPSTREAM_PORT=${XDEBUG_PORT:-9000}
       volumes:
@@ -122,12 +127,8 @@ services:
       links:
         - adminer
       networks:
-        frontend:
-          aliases:
-            - *default-domain
-        backend:
-          aliases:
-            - *default-domain
+        - backend
+        - frontend
 
     postgres:
       restart: on-failure
@@ -153,7 +154,10 @@ services:
           - *db-name
           - *db-username
           - *db-password
+      ports:
+          - "${ADMINER_PORT:-8080}:8080"
       depends_on:
         - php-fpm
       networks:
         - backend
+        - frontend
