@@ -8,11 +8,13 @@ main() {
   if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
     RED="$(tput setaf 1)"
     GREEN="$(tput setaf 2)"
+    BLUE="$(tput setaf 4)"
     YELLOW="$(tput setaf 3)"
     NORMAL="$(tput sgr0)"
   else
     RED=""
     GREEN=""
+    BLUE=""
     YELLOW=""
     NORMAL=""
   fi
@@ -29,46 +31,52 @@ main() {
     LARADOCK_FOLDER=docker
   fi
 
-  if [ -d "./$LARADOCK_FOLDER" ]; then
+  if [ -d "./$LARADOCK_FOLDER" ] || [ -f "./docker-compose.yml" ]; then
+    printf "${YELLOW}"
     echo ''
-    printf "${YELLOW}It appears that you already have docker installed for your project.${NORMAL}\n"
-    printf "You'll need to remove the folder ./$LARADOCK_FOLDER and the file ./docker-compose.yml you want to continue.\n"
+    echo "It appears that you already have docker installed for your project."
+    echo "You'll need to remove the folder ./$LARADOCK_FOLDER and the file ./docker-compose.yml you want to continue."
     echo ''
-    exit
-  fi
-
-  if [ -f "./docker-compose.yml" ]; then
-    echo ''
-    printf "${YELLOW}It appears that you already have docker installed for your project.${NORMAL}\n"
-    printf "You'll need to remove the folder ./$LARADOCK_FOLDER and the file ./docker-compose.yml you want to continue.\n"
-    echo ''
-    exit
+    printf "${NORMAL}"
+    exit 1
   fi
 
   umask g-w,o-w
 
-  printf "${BLUE}Cloning DevSquad Laradock...${NORMAL}\n"
+  printf "${BLUE}"
+  echo ''
+  echo 'Cloning DevSquad Laradock...'
+  echo ''
+  printf "${NORMAL}"
+
   command -v git >/dev/null 2>&1 || {
+    printf "${BLUE}"
     echo ''
-    printf "${RED}git is not installed.${NORMAL}\n"
+    echo "git is not installed."
     echo ''
+    printf "${NORMAL}"
+
     exit 1
   }
 
   if [ "$OSTYPE" = cygwin ]; then
     if git --version | grep msysgit > /dev/null; then
+      printf "${RED}"
       echo ''
-      printf "${RED}Error: Windows/MSYS Git is not supported on Cygwin.${NORMAL}\n"
-      printf "${RED}Error: Make sure the Cygwin git package is installed and is first on the path.${NORMAL}\n"
+      echo 'Error: Windows/MSYS Git is not supported on Cygwin.'
+      echo 'Error: Make sure the Cygwin git package is installed and is first on the path.'
       echo ''
+      printf "${NORMAL}"
       exit 1
     fi
   fi
 
   env git clone --depth=1 https://github.com/teamdevsquad/laradock.git "$LARADOCK_WORKSPACE" || {
+    printf "${RED}"
     echo ''
-    printf "${RED}Error: git clone of teamdevsquad/laradock repo failed${NORMAL}\n"
+    echo 'Error: git clone of teamdevsquad/laradock repo failed'
     echo ''
+    printf "${NORMAL}"
     exit 1
   }
 
