@@ -33,6 +33,7 @@ main() {
     echo ''
     printf "${YELLOW}It appears that you already have docker installed for your project.${NORMAL}\n"
     printf "You'll need to remove the folder ./$LARADOCK_FOLDER and the file ./docker-compose.yml you want to continue.\n"
+    echo ''
     exit
   fi
 
@@ -40,6 +41,7 @@ main() {
     echo ''
     printf "${YELLOW}It appears that you already have docker installed for your project.${NORMAL}\n"
     printf "You'll need to remove the folder ./$LARADOCK_FOLDER and the file ./docker-compose.yml you want to continue.\n"
+    echo ''
     exit
   fi
 
@@ -49,6 +51,7 @@ main() {
   command -v git >/dev/null 2>&1 || {
     echo ''
     printf "${RED}git is not installed.${NORMAL}\n"
+    echo ''
     exit 1
   }
 
@@ -57,6 +60,7 @@ main() {
       echo ''
       printf "${RED}Error: Windows/MSYS Git is not supported on Cygwin.${NORMAL}\n"
       printf "${RED}Error: Make sure the Cygwin git package is installed and is first on the path.${NORMAL}\n"
+      echo ''
       exit 1
     fi
   fi
@@ -64,6 +68,7 @@ main() {
   env git clone --depth=1 https://github.com/teamdevsquad/laradock.git "$LARADOCK_WORKSPACE" || {
     echo ''
     printf "${RED}Error: git clone of teamdevsquad/laradock repo failed${NORMAL}\n"
+    echo ''
     exit 1
   }
 
