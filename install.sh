@@ -67,7 +67,10 @@ main() {
   }
 
   printf "${GREEN}"
-  echo 'p.s. Documentation available at https://github.com/teamdevsquad/laradock/wiki.'
+  echo ''
+  echo 'DevSquad Laradock is now installed'
+  echo ''
+  echo 'Documentation available at https://github.com/teamdevsquad/laradock/wiki.'
   echo ''
   printf "${NORMAL}"
 }
