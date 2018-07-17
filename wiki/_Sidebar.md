@@ -1,0 +1,4 @@
+- [Getting Started](Home)
+  - [Project Configuration](Home#docker-project-configuration)
+  - [Developer Configuration](Home#docker-developer-configuration)
+- [Debugging With PhpStorm](Debugging-With-PhpStorm)
